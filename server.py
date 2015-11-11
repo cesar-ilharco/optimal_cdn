@@ -5,6 +5,9 @@ class Server(object):
 		self.capacity_limit = capacity_limit_
 		self.used_capacity = 0
 
+	def __cmp__ (self, other):
+		return cmp(self.used_capacity, other.used_capacity)
+
 class ServerManager(object):
 
 	def __init__ (self):
