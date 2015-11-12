@@ -50,7 +50,7 @@ class TestPlacementAlgorithms(unittest.TestCase):
 		demands = range(1,100)
 		number_servers = 115
 		clients, servers = self.__get_clients_and_servers(demands, number_servers)
-		optimal_usages = [0]*15 + range(100)
+		optimal_usages = [0]*15 + list(range(100))
 		self.__test_optimal_placement_unlimited_capacities(clients, servers, optimal_usages)
 
 	def test_unlimited_6(self):

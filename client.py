@@ -4,8 +4,8 @@ class Client(object):
 		self.id = id_
 		self.demand = demand_
 
-	def __cmp__ (self, other):
-		return cmp(self.demand, other.demand)
+	def __lt__ (self, other):
+		return self.demand < other.demand
 
 
 class ClientManager(object):
