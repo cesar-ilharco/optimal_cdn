@@ -16,4 +16,5 @@ class PlacementManager(object):
 	def get_server(self, client):
 		return self.__map_client_server[client]
 
-
+	def change_multiplicative_factor(self, server, number, multiplicative_factor):
+		server.multiplicative_factors[number] = multiplicative_factor
