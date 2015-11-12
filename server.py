@@ -4,6 +4,7 @@ class Server(object):
 		self.id = id_
 		self.capacity_limit = capacity_limit_
 		self.used_capacity = 0
+		self.multiplicative_factors = [0, 0]
 
 	def __lt__ (self, other):
 		return self.used_capacity < other.used_capacity
