@@ -2,7 +2,7 @@ import unittest
 
 from client import ClientManager
 from server import ServerManager
-from placement_algorithms import optimal_placement_unlimited_capacity
+from placement_algorithms import optimal_placement_unlimited_capacity, optimal_placement_limited_capacity
 
 class TestPlacementAlgorithms(unittest.TestCase):
 
@@ -59,6 +59,8 @@ class TestPlacementAlgorithms(unittest.TestCase):
 		clients, servers = self.__get_clients_and_servers(demands, number_servers)
 		optimal_usages = [200] * 50
 		self.__test_optimal_placement_unlimited_capacities(clients, servers, optimal_usages)
+
+/////// # Add unittests for algorithm 2.
 
 
 if __name__ == '__main__':
