@@ -60,7 +60,6 @@ class TestPlacementAlgorithms(unittest.TestCase):
 		optimal_usages = [200] * 50
 		self.__test_optimal_placement_unlimited_capacities(clients, servers, optimal_usages)
 
-/////// # Add unittests for algorithm 2.
 
 
 if __name__ == '__main__':

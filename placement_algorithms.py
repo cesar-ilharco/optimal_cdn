@@ -14,7 +14,6 @@ def optimal_placement_unlimited_capacity(clients, servers):
 
 
 def optimal_placement_limited_capacity (placement_manager):
-	# Used capacity is an integer. Do you intend to do integer division here? Add float(sum(...)) if not.
 	avg_used_capacity = sum(server.used_capacity for server in placement_manager.servers) / len(placement_manager.servers)
 	sorted_servers = sorted(placement_manager.servers)
 	indexes = []
@@ -22,23 +21,22 @@ def optimal_placement_limited_capacity (placement_manager):
 	index, next_server = __find_closest_used_capacity(sorted_servers, avg_used_capacity)
 	del sorted_servers[index]
 	indexes.append(next_server.id)
-	# We should replace S with a more meaningful name.
-	S = avg_used_capacity + next_server.used_capacity - max_used_capacity
-	lambda1 = S/next_server.used_capacity
-	placement_manager.change_multiplicative_factor(next_server, 0, lambda1)
-	lambda2 = 1 - lambda1
+	accumulated_capacity = avg_used_capacity + next_server.used_capacity - max_used_capacity
+	lambda1 = accumulated_capacity/next_server.used_capacity
+	placement_manager.set_multiplicative_factor(next_server, placement_manager.get_clients_served_by(next_server), lambda1)
+	lambda2 = 1.0 - lambda1
 	last_server = next_server
 	for count in range(1, len(placement_manager.servers)):
-		target = (count+2)*avg_used_capacity - max_used_capacity - S
+		target = (count+2)*avg_used_capacity - max_used_capacity - accumulated_capacity
 		index, next_server = __find_closest_used_capacity(sorted_servers, target)
 		del sorted_servers[index]
 		indexes.append(next_server.id)
-		S += next_server.used_capacity
-		lambda1 = (S-count*avg_used_capacity)/next_server.used_capacity
-		placement_manager.change_multiplicative_factor(next_server, 0, lambda1)
-		placement_manager.change_multiplicative_factor(last_server, 1, 1 - lambda1)
+		accumulated_capacity += next_server.used_capacity
+		lambda1 = (accumulated_capacity-count*avg_used_capacity)/next_server.used_capacity
+		placement_manager.set_multiplicative_factor(next_server, placement_manager.get_clients_served_by(next_server), lambda1)
+		placement_manager.set_multiplicative_factor(last_server, placement_manager.get_clients_served_by(next_server), 1.0 - lambda1)
 		last_server = next_server
-	placement_manager.change_multiplicative_factor(last_server, 1, lambda2)
+	placement_manager.set_multiplicative_factor(last_server, placement_manager.get_clients_served_by(next_server), lambda2)
 	return placement_manager, indexes
 
 
