@@ -3,7 +3,7 @@ import heapq
 from placement import PlacementManager
 
 
-def optimal_placement_unlimited_capacity(clients, servers):
+def placement(clients, servers):
 	placement_manager = PlacementManager(servers)
 	clients.sort(reverse=True)
 	for client in clients:
@@ -13,7 +13,7 @@ def optimal_placement_unlimited_capacity(clients, servers):
 	return placement_manager
 
 
-def optimal_placement_limited_capacity (placement_manager):
+def optimal_placement (placement_manager):
 	avg_used_capacity = sum(server.used_capacity for server in placement_manager.servers) / len(placement_manager.servers)
 	sorted_servers = sorted(placement_manager.servers)
 	indexes = []
