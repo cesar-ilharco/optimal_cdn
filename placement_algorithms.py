@@ -21,7 +21,8 @@ def placement(clients, servers):
 
 def optimal_placement(clients, servers):
     """
-    Add algorithm explanation.
+    Uses the placement algorithm to get an allocation of clients in the desired number of servers with used capacities all close to one another.
+    Uses this allocation to place the clients in the servers in such a way to satisfy all the constraints with the minimal possible used capacity for each server, in two time steps for each server.
     """
     placement_manager = placement(clients, servers)
     avg_used_capacity = sum(server.used_capacity for server in placement_manager.servers) / len(placement_manager.servers)
@@ -32,7 +33,7 @@ def optimal_placement(clients, servers):
     accumulated_capacity = avg_used_capacity + next_server.used_capacity - max_used_capacity
     lambda1 = accumulated_capacity/next_server.used_capacity
     next_clients = placement_manager.get_clients_served_by(next_server).keys()
-    first_clients = copy.deepcopy(list(next_clients))
+    first_clients = copy.copy(list(next_clients))
     placement_manager.set_multiplicative_factor(next_server, first_clients, lambda1)
     next_server.used_capacity = lambda1*sum(client.demand for client in first_clients)
     lambda2 = 1.0 - lambda1
@@ -56,7 +57,8 @@ def optimal_placement(clients, servers):
 
 def __find_closest_used_capacity(servers, target):
     """
-    Add description.
+    Given a sorted list of servers, finds the server in that list whose used capacity is the closest to a given target.
+    Returns this server and its position in the list.
     """
     if len(servers) == 1:
         return [0, servers[0]]
