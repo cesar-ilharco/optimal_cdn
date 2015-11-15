@@ -6,9 +6,11 @@ from placement_algorithms import placement, optimal_placement
 
 class TestPlacementAlgorithms(unittest.TestCase):
 
+	def assertNear(self, x, y, precision):
+		self.assertTrue(abs(x-y) < precision)
+
 	def __test_placement(self, clients, servers, optimal_usages):
 		placement_manager = placement(clients, servers)
-		(clients, servers)
 		used_capacities = sorted([server.used_capacity for server in servers])
 		self.assertEqual(used_capacities, optimal_usages)
 
@@ -16,11 +18,12 @@ class TestPlacementAlgorithms(unittest.TestCase):
 		placement_manager = optimal_placement(clients, servers)
 		avg_used_capacity = sum(client.demand for client in clients) / len(servers)
 		for server in servers:
-			self.assertTrue(abs(server.used_capacity - avg_used_capacity) < 10**(-5))
-			for client in clients:
-			for server in placement_manager.get_servers(client):
-				self.assertTrue(placement_manager.get_multiplicative_factor_from_client(client, server) >= -10**(-5))
-			self.assertEqual(sum(placement_manager.get_multiplicative_factor_from_client(client, server) for server in placement_manager.get_servers(client)), 1)
+			self.assertNear(server.used_capacity, avg_used_capacity, 1.0)
+		for client in clients:
+			servers_mult_factors = placement_manager.get_servers(client)
+			for server in servers_mult_factors.keys():
+				self.assertTrue(servers_mult_factors[server] >= -1E-6)
+			self.assertEqual(sum(servers_mult_factors.values()), 1.0)
 	
 	def __get_clients_and_servers(self, demands, number_servers):
 		client_manager = ClientManager()

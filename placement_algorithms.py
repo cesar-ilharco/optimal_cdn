@@ -1,4 +1,5 @@
 import heapq
+import copy
 
 from placement import PlacementManager
 
@@ -22,7 +23,8 @@ def optimal_placement (clients, servers):
 	del sorted_servers[index]
 	accumulated_capacity = avg_used_capacity + next_server.used_capacity - max_used_capacity
 	lambda1 = accumulated_capacity/next_server.used_capacity
-	first_clients = copy.copy(placement_manager.get_clients_served_by(next_server))
+	next_clients = placement_manager.get_clients_served_by(next_server).keys()
+	first_clients = copy.copy(next_clients)
 	placement_manager.set_multiplicative_factor(next_server, first_clients, lambda1)
 	next_server.used_capacity = lambda1*sum(client.demand for client in first_clients)
 	lambda2 = 1.0 - lambda1
@@ -30,13 +32,14 @@ def optimal_placement (clients, servers):
 	for count in range(1, len(placement_manager.servers)):
 		target = (count+2)*avg_used_capacity - max_used_capacity - accumulated_capacity
 		index, next_server = __find_closest_used_capacity(sorted_servers, target)
+		next_clients = placement_manager.get_clients_served_by(next_server).keys()
 		del sorted_servers[index]
 		accumulated_capacity += next_server.used_capacity
 		lambda1 = (accumulated_capacity-count*avg_used_capacity)/next_server.used_capacity
-		placement_manager.set_multiplicative_factor(next_server, placement_manager.get_clients_served_by(next_server), lambda1)
-		next_server.used_capacity = lambda1*sum(client.demand for client in placement_manager.get_clients_served_by(next_server))
-		placement_manager.set_multiplicative_factor(last_server, placement_manager.get_clients_served_by(next_server), 1.0 - lambda1)
-		last_server.used_capacity += (1.0 - lambda1)*sum(client.demand for client in placement_manager.get_clients_served_by(next_server))
+		placement_manager.set_multiplicative_factor(next_server, next_clients, lambda1)
+		next_server.used_capacity = lambda1*sum(client.demand for client in next_clients)
+		placement_manager.set_multiplicative_factor(last_server, next_clients, 1.0 - lambda1)
+		last_server.used_capacity += (1.0 - lambda1)*sum(client.demand for client in next_clients)
 		last_server = next_server
 	placement_manager.set_multiplicative_factor(last_server, first_clients, lambda2)
 	last_server.used_capacity += lambda2*sum(client.demand for client in first_clients)
