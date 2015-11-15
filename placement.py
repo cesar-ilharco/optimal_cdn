@@ -16,6 +16,12 @@ class PlacementManager(object):
 	def get_servers(self, client):
 		return self.__map_client_servers[client]
 
+	def get_multiplicative_factor_from_server(self, server, client):
+		return self.__map_server_clients[server][client]
+
+	def get_multiplicative_factor_from_client(self, server, client):
+		return self.__map_server_clients[client][server]
+
 	def set_multiplicative_factor(self, server, clients, multiplicative_factor):
 		for client in clients:
 			if client not in self.__map_client_servers:
