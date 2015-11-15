@@ -4,6 +4,10 @@ from client import ClientManager
 from server import ServerManager
 from placement_algorithms import placement, optimal_placement
 
+"""
+Call main.py from the command line, specifying the input file as an argument.
+e.g. python3 main.py input_1.txt
+"""
 
 def parse_args():
     parser = argparse.ArgumentParser()
