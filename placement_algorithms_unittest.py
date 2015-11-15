@@ -17,10 +17,11 @@ class TestPlacementAlgorithms(unittest.TestCase):
 		avg_used_capacity = sum(client.demand for client in clients) / len(servers)
 		for server in servers:
 			self.assertTrue(abs(server.used_capacity - avg_used_capacity) < 10**(-5))
-		for client in clients:
-			self.assertTrue(placement_manager.get_multiplicative_factor_from_client(client, server) >= 0 for server in placement_manager.get_servers(client))
+			for client in clients:
+			for server in placement_manager.get_servers(client):
+				self.assertTrue(placement_manager.get_multiplicative_factor_from_client(client, server) >= -10**(-5))
 			self.assertEqual(sum(placement_manager.get_multiplicative_factor_from_client(client, server) for server in placement_manager.get_servers(client)), 1)
-
+	
 	def __get_clients_and_servers(self, demands, number_servers):
 		client_manager = ClientManager()
 		server_manager = ServerManager()
