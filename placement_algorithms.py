@@ -34,6 +34,7 @@ def optimal_placement(clients, servers):
     lambda1 = accumulated_capacity/next_server.used_capacity
     next_clients = placement_manager.get_clients_served_by(next_server).keys()
     first_clients = copy.copy(list(next_clients))
+    placement_manager.reset(first_clients)
     placement_manager.set_multiplicative_factor(next_server, first_clients, lambda1)
     next_server.used_capacity = lambda1*sum(client.demand for client in first_clients)
     lambda2 = 1.0 - lambda1
@@ -45,6 +46,7 @@ def optimal_placement(clients, servers):
         del sorted_servers[index]
         accumulated_capacity += next_server.used_capacity
         lambda1 = (accumulated_capacity-count*avg_used_capacity)/next_server.used_capacity
+        placement_manager.reset(next_clients)
         placement_manager.set_multiplicative_factor(next_server, next_clients, lambda1)
         next_server.used_capacity = lambda1*sum(client.demand for client in next_clients)
         placement_manager.set_multiplicative_factor(last_server, next_clients, 1.0 - lambda1)

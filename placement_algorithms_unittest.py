@@ -32,9 +32,9 @@ class TestPlacementAlgorithms(unittest.TestCase):
             self.assertNear(server.used_capacity, avg_used_capacity, 1E-6)
         for client in clients:
             servers_mult_factors = placement_manager.get_servers(client)
-            for server in servers_mult_factors.keys():
-                self.assertTrue(servers_mult_factors[server] >= -1E-6)
-            self.assertEqual(sum(servers_mult_factors.values()), 1.0)
+            for server_mult_factor in servers_mult_factors:
+                self.assertTrue(server_mult_factor[1] >= -1E-6)
+            self.assertEqual(sum(server_mult_factor[1] for server_mult_factor in servers_mult_factors), 1.0)
 
     def __get_clients_and_servers(self, demands, number_servers):
         """

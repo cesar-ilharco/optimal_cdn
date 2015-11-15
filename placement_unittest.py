@@ -37,7 +37,7 @@ class TestPlacementManager(unittest.TestCase):
         for client in clients:
             placement_manager.place_client(client, server)
         for client in clients:
-            self.assertEqual(placement_manager.get_servers(client), {server : 1.0})
+            self.assertEqual(placement_manager.get_servers(client), [(server, 1.0)])
         self.assertEqual(placement_manager.get_clients_served_by(server),
                           {client : 1.0 for client in clients})
         self.assertEqual(server.used_capacity, sum(demands))
@@ -59,13 +59,13 @@ class TestPlacementManager(unittest.TestCase):
             placement_manager.place_client(client, servers[server])
             server = (server+1)%number_servers
         for i in range(number_clients):
-            self.assertEquals(placement_manager.get_servers(clients[i]), {servers[i%number_servers] : 1.0})
+            self.assertEqual(placement_manager.get_servers(clients[i]), [(servers[i%number_servers], 1.0)])
         for i in range(number_servers):
             served_clients = [clients[j] for j in range(i, number_clients, number_servers)]
-            self.assertEquals(placement_manager.get_clients_served_by(servers[i]),
-                              {client : 1.0 for client in served_clients})
-            self.assertEquals(servers[i].used_capacity,
-                              sum(client.demand for client in served_clients))
+            self.assertEqual(placement_manager.get_clients_served_by(servers[i]),
+                             {client : 1.0 for client in served_clients})
+            self.assertEqual(servers[i].used_capacity,
+                             sum(client.demand for client in served_clients))
 
     def test_set_multiplicative_factors(self):
         """
@@ -81,17 +81,18 @@ class TestPlacementManager(unittest.TestCase):
         placement_manager = PlacementManager(servers)
         multiplicative_factors = [random.random() for i in range(number_clients)]
         for i in range(number_clients):
+            placement_manager.reset(clients[i:i+1])
             placement_manager.set_multiplicative_factor(servers[0], clients[i:i+1], multiplicative_factors[i])
             placement_manager.set_multiplicative_factor(servers[1], clients[i:i+1], 1.0 - multiplicative_factors[i])
         for i in range(number_clients):
             retrieved_servers = placement_manager.get_servers(clients[i])
-            self.assertEquals(retrieved_servers[servers[0]], multiplicative_factors[i])
-            self.assertEquals(retrieved_servers[servers[1]], 1.0 - multiplicative_factors[i])
+            self.assertEqual(retrieved_servers[0][1], multiplicative_factors[i])
+            self.assertEqual(retrieved_servers[1][1], 1.0 - multiplicative_factors[i])
         retrieved_clients = placement_manager.get_clients_served_by(servers[0])
-        self.assertEquals(retrieved_clients,
+        self.assertEqual(retrieved_clients,
                           {clients[i] : multiplicative_factors[i] for i in range(number_clients)})
         retrieved_clients = placement_manager.get_clients_served_by(servers[1])
-        self.assertEquals(retrieved_clients,
+        self.assertEqual(retrieved_clients,
                           {clients[i] : 1.0 - multiplicative_factors[i] for i in range(number_clients)})
 
 
