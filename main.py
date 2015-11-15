@@ -1,6 +1,15 @@
+import argparse
+
 from client import ClientManager
 from server import ServerManager
 from placement_algorithms import placement, optimal_placement
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("file_name", type=str, help="Input file name")
+    args = parser.parse_args()
+    return args.file_name
 
 def read_input(file_name):
     """
@@ -22,7 +31,8 @@ def read_input(file_name):
     return clients, servers, algorithm
 
 if __name__ == '__main__':
-    clients, servers, algorithm = read_input('input_1.txt')
+    file_name = parse_args()
+    clients, servers, algorithm = read_input(file_name)
     placement_algorithm = placement if algorithm==1 else optimal_placement
     placement_manager = placement_algorithm(clients, servers)
     for server in servers:
