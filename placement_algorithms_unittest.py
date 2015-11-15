@@ -24,12 +24,12 @@ class TestPlacementAlgorithms(unittest.TestCase):
     def __test_optimal_placement(self, clients, servers):
         """
         Within the optimal placement context, each server should have an used_capacity
-        that is close to the average required capacity per server.
+        that is, up to an error margin, equal to the average required capacity per server.
         """
         placement_manager = optimal_placement(clients, servers)
         avg_used_capacity = sum(client.demand for client in clients) / len(servers)
         for server in servers:
-            self.assertNear(server.used_capacity, avg_used_capacity, 1.0)
+            self.assertNear(server.used_capacity, avg_used_capacity, 1E-6)
         for client in clients:
             servers_mult_factors = placement_manager.get_servers(client)
             for server in servers_mult_factors.keys():
