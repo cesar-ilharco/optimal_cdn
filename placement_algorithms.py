@@ -5,6 +5,11 @@ from placement import PlacementManager
 
 
 def placement(clients, servers):
+    """
+    Greedy algorithm.
+    Sort clients in descending order of their demand.
+    For each client, place it into the server that has the lowest used_capacity.
+    """
     placement_manager = PlacementManager(servers)
     clients.sort(reverse=True)
     for client in clients:
@@ -15,6 +20,9 @@ def placement(clients, servers):
 
 
 def optimal_placement(clients, servers):
+    """
+    Add algorithm explanation.
+    """
     placement_manager = placement(clients, servers)
     avg_used_capacity = sum(server.used_capacity for server in placement_manager.servers) / len(placement_manager.servers)
     sorted_servers = sorted(placement_manager.servers)
@@ -47,6 +55,9 @@ def optimal_placement(clients, servers):
 
 
 def __find_closest_used_capacity(servers, target):
+    """
+    Add description.
+    """
     if len(servers) == 1:
         return [0, servers[0]]
     if target > servers[-1].used_capacity:

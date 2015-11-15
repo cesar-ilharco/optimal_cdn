@@ -3,19 +3,27 @@ from server import ServerManager
 from placement_algorithms import placement, optimal_placement
 
 def read_input(file_name):
+    """
+    Input: file name (string).
+    File format:
+        int algorithm (1 or 2)
+        int number of servers
+        list of int [client demands]
+    Reads file and outputs a list of clients, a list of servers and the algorithm.
+    """
     f = open(file_name, 'r')
     client_manager = ClientManager()
     server_manager = ServerManager()
-    optimal = (f.readline() == '2')
+    algorithm = int(f.readline())
     number_servers = int(f.readline())
     servers = [server_manager.create_server() for i in range(number_servers)]
     demands = map(int, f.readline().split())
     clients = [client_manager.create_client(demand) for demand in demands]
-    return clients, servers, optimal
+    return clients, servers, algorithm
 
 if __name__ == '__main__':
-    clients, servers, optimal = read_input('input_1.txt')
-    placement_algorithm = optimal_placement if optimal else placement
+    clients, servers, algorithm = read_input('input_1.txt')
+    placement_algorithm = placement if algorithm==1 else optimal_placement
     placement_manager = placement_algorithm(clients, servers)
     for server in servers:
         served_clients = placement_manager.get_clients_served_by(server)

@@ -8,27 +8,45 @@ from client import ClientManager
 
 class TestPlacementManager(unittest.TestCase):
 
+    """
+    Unittests for PlacementManager class.
+    """
+
     def test_place_and_get_zero_clients(self):
+        """
+        Servers are initialized empty.
+        """
         server_manager = ServerManager()
         servers = [server_manager.create_server() for i in range(30)]
         placement_manager = PlacementManager(servers)
         for server in servers:
-            self.assertEquals(placement_manager.get_clients_served_by(server), {})
+            self.assertEqual(placement_manager.get_clients_served_by(server), {})
 
     def test_place_in_single_server(self):
+        """
+        All clients served by a single server.
+        Its used capacity equals the total client demand.
+        """
         server_manager = ServerManager()
         client_manager = ClientManager()
         server = server_manager.create_server()
-        clients = [client_manager.create_client(random.randint(10, 30)) for i in range(100)]
+        number_clients = 100
+        demands = [random.randint(10, 30) for i in range(number_clients)]
+        clients = [client_manager.create_client(demand) for demand in demands]
         placement_manager = PlacementManager([server])
         for client in clients:
             placement_manager.place_client(client, server)
         for client in clients:
-            self.assertEquals(placement_manager.get_servers(client), {server : 1.0})
-        self.assertEquals(placement_manager.get_clients_served_by(server),
+            self.assertEqual(placement_manager.get_servers(client), {server : 1.0})
+        self.assertEqual(placement_manager.get_clients_served_by(server),
                           {client : 1.0 for client in clients})
+        self.assertEqual(server.used_capacity, sum(demands))
 
     def test_place_in_multiple_servers(self):
+        """
+        Each client placed in a server, with multiplicative_factor one.
+        For each server, the used capacity equals the sum of its clients' demands.
+        """
         number_servers = 30
         number_clients = 1000
         server_manager = ServerManager()
@@ -50,6 +68,10 @@ class TestPlacementManager(unittest.TestCase):
                               sum(client.demand for client in served_clients))
 
     def test_set_multiplicative_factors(self):
+        """
+        Place each clients i in two servers:
+        server[0], with multiplicative_factor k, and servers[1] with multiplicative_factor 1.0-k.
+        """
         number_servers = 2
         number_clients = 1000
         server_manager = ServerManager()

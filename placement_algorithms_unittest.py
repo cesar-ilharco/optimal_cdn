@@ -7,14 +7,25 @@ from placement_algorithms import placement, optimal_placement
 class TestPlacementAlgorithms(unittest.TestCase):
 
     def assertNear(self, x, y, precision):
+        """
+        assert | x - y | < precision
+        """
         self.assertTrue(abs(x-y) < precision)
 
-    def __test_placement(self, clients, servers, optimal_usages):
+    def __test_placement(self, clients, servers, usages):
+        """
+        Input: lists of clients, servers, usages.
+        Assert if the output from placement algorithm corresponds to the given usages.
+        """
         placement(clients, servers)
         used_capacities = sorted([server.used_capacity for server in servers])
-        self.assertEqual(used_capacities, optimal_usages)
+        self.assertEqual(used_capacities, usages)
 
     def __test_optimal_placement(self, clients, servers):
+        """
+        Within the optimal placement context, each server should have an used_capacity
+        that is close to the average required capacity per server.
+        """
         placement_manager = optimal_placement(clients, servers)
         avg_used_capacity = sum(client.demand for client in clients) / len(servers)
         for server in servers:
@@ -26,6 +37,10 @@ class TestPlacementAlgorithms(unittest.TestCase):
             self.assertEqual(sum(servers_mult_factors.values()), 1.0)
 
     def __get_clients_and_servers(self, demands, number_servers):
+        """
+        Input: list with demands and integer number_servers.
+        Output: list with clients and list with servers.
+        """
         client_manager = ClientManager()
         server_manager = ServerManager()
         clients = [client_manager.create_client(demand) for demand in demands]
@@ -36,43 +51,43 @@ class TestPlacementAlgorithms(unittest.TestCase):
         demands = [11, 8, 9, 15, 5, 3, 12, 7]
         number_servers = 4
         clients, servers = self.__get_clients_and_servers(demands, number_servers)
-        optimal_usages = [17, 17, 18, 18]
-        self.__test_placement(clients, servers, optimal_usages)
+        usages = [17, 17, 18, 18]
+        self.__test_placement(clients, servers, usages)
 
     def test_placement_2(self):
         demands = [7, 5, 18, 13, 8, 21, 6, 14]
         number_servers = 3
         clients, servers = self.__get_clients_and_servers(demands, number_servers)
-        optimal_usages = [28, 32, 32]
-        self.__test_placement(clients, servers, optimal_usages)
+        usages = [28, 32, 32]
+        self.__test_placement(clients, servers, usages)
 
     def test_placement_3(self):
         demands = [24, 9, 1, 13, 7, 8, 4]
         number_servers = 3
         clients, servers = self.__get_clients_and_servers(demands, number_servers)
-        optimal_usages = [21, 21, 24]
-        self.__test_placement(clients, servers, optimal_usages)
+        usages = [21, 21, 24]
+        self.__test_placement(clients, servers, usages)
 
     def test_placement_4(self):
         demands = [12, 4] + [10]*142
         number_servers = 100
         clients, servers = self.__get_clients_and_servers(demands, number_servers)
-        optimal_usages = [10]*55 + [12, 14] + [20]*43
-        self.__test_placement(clients, servers, optimal_usages)
+        usages = [10]*55 + [12, 14] + [20]*43
+        self.__test_placement(clients, servers, usages)
 
     def test_placement_5(self):
         demands = range(1, 100)
         number_servers = 115
         clients, servers = self.__get_clients_and_servers(demands, number_servers)
-        optimal_usages = [0]*15 + list(range(100))
-        self.__test_placement(clients, servers, optimal_usages)
+        usages = [0]*15 + list(range(100))
+        self.__test_placement(clients, servers, usages)
 
     def test_placement_6(self):
         demands = [10] * 1000
         number_servers = 50
         clients, servers = self.__get_clients_and_servers(demands, number_servers)
-        optimal_usages = [200] * 50
-        self.__test_placement(clients, servers, optimal_usages)
+        usages = [200] * 50
+        self.__test_placement(clients, servers, usages)
 
     def test_optimal_placement_1(self):
         demands = [11, 8, 9, 15, 5, 3, 12, 7]
